@@ -35,6 +35,10 @@ function setSelectedShard(id) {
 const shardsContainer = document.getElementById("shards-container");
 
 function paintShards() {
+  while (shardsContainer.lastChild) {
+    shardsContainer.removeChild(shardsContainer.lastChild)
+  }
+  
   for (let i = 0; i < TotalShards; i++) {
     const el = document.createElement("div");
     el.className = "shard";
@@ -59,13 +63,24 @@ socket.addEventListener("open", function(e) {
 });
 socket.addEventListener("close", function(e) {
   console.log("socket close", e);
+  shards = [];
+  TotalShards = 0;
+  paintShards();
 });
 socket.addEventListener("error", function(e) {
   console.log("socket error", e);
 });
 
 const OP = {
-  HELLO: 0
+  HELLO: 0,
+  UPDATE: 1,
+};
+const STATUS = {
+  0: 'unknown',
+  1: 'starting',
+  2: 'online',
+  3: 'stopping',
+  4: 'offline'
 };
 
 socket.addEventListener("message", function(e) {
@@ -80,6 +95,11 @@ socket.addEventListener("message", function(e) {
     case OP.HELLO:
       TotalShards = data.Data.TotalShards;
       paintShards();
+      break;
+    case OP.UPDATE:
+      const id = data.Data.Shard;
+      const val = STATUS[data.Data.Status];
+      shards[id].setAttribute("data-status", val)
       break;
   }
 });

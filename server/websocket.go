@@ -1,10 +1,13 @@
 package server
 
 import (
+	"encoding/json"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -13,6 +16,7 @@ type socketServer struct {
 	clients     []*websocket.Conn
 	upgrader    websocket.Upgrader
 	totalShards int
+	updateList  chan shardUpdate
 }
 
 func newSocketServer() *socketServer {
@@ -25,6 +29,7 @@ func newSocketServer() *socketServer {
 		clients:     make([]*websocket.Conn, 0),
 		upgrader:    websocket.Upgrader{},
 		totalShards: int(totalShards),
+		updateList:  make(chan shardUpdate, 128),
 	}
 }
 
@@ -46,6 +51,19 @@ func (s *socketServer) socketUpgrader(w http.ResponseWriter, r *http.Request) {
 	conn.SetCloseHandler(closeHandler)
 }
 
+func (s *socketServer) run() {
+	// TODO: remove
+	go s.testData()
+
+	for {
+		select {
+		case u := <-s.updateList:
+			log.Println("dequeued update", u)
+			s.sayUpdate(u)
+		}
+	}
+}
+
 func (s *socketServer) sayHello(conn *websocket.Conn) {
 	data := Message{
 		Op: OpHello,
@@ -59,6 +77,35 @@ func (s *socketServer) sayHello(conn *websocket.Conn) {
 		s.die(conn)
 	}
 	log.Println(conn.RemoteAddr(), "opened and saluted")
+}
+
+func (s *socketServer) sayUpdate(u shardUpdate) {
+	data := Message{
+		Op: OpUpdate,
+		Data: UpdateMessage{
+			Shard:  u.ID,
+			Status: u.Status,
+		},
+	}
+
+	b, err := json.Marshal(data)
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	pm, err := websocket.NewPreparedMessage(websocket.TextMessage, b)
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	for _, c := range s.clients {
+		err = c.WritePreparedMessage(pm)
+		if err != nil {
+			log.Println(err)
+			s.die(c)
+		}
+	}
+	log.Println("sent updates")
 }
 
 func (s *socketServer) die(conn *websocket.Conn) {
@@ -84,4 +131,24 @@ func (s *socketServer) die(conn *websocket.Conn) {
 	// set clients to the array - 1
 	// [0 4 2 3]
 	s.clients = c[:len(c)-1]
+}
+
+// TODO: remove this for prod
+func (s *socketServer) testData() {
+	src := rand.NewSource(time.Now().UnixNano())
+	rng := rand.New(src)
+
+	for {
+		shard := rng.Intn(s.totalShards)
+		status := rng.Intn(5)
+
+		u := shardUpdate{
+			ID:     shard,
+			Status: status,
+		}
+		s.updateList <- u
+		log.Println("built update", u)
+
+		time.Sleep(time.Second * 1)
+	}
 }
