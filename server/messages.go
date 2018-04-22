@@ -18,7 +18,8 @@ const (
 )
 
 type (
-	shardUpdate struct {
+	// ShardUpdate is the carrier for a shard update
+	ShardUpdate struct {
 		ID     int
 		Status int
 	}

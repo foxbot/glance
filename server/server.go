@@ -1,7 +1,11 @@
 package server
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"log"
 	"net/http"
+	"path"
 
 	"github.com/go-chi/chi/middleware"
 
@@ -11,6 +15,7 @@ import (
 // Server configures the HTTP server
 type Server struct {
 	Host   string
+	Key    string
 	socket *socketServer
 }
 
@@ -35,5 +40,25 @@ func (s *Server) Run() error {
 
 // StatusWebhook handles incoming status webhooks from the bots
 func (s *Server) StatusWebhook(w http.ResponseWriter, r *http.Request) {
+	key := path.Base(r.URL.Path)
+	if key != s.Key {
+		w.WriteHeader(401)
+		return
+	}
 
+	b, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(500)
+		return
+	}
+	var u ShardUpdate
+	err = json.Unmarshal(b, &u)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(500)
+		return
+	}
+	s.socket.updateList <- u
+	w.WriteHeader(202)
 }

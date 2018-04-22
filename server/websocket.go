@@ -17,7 +17,7 @@ type socketServer struct {
 	upgrader    websocket.Upgrader
 	totalShards int
 	shardCache  map[int]int
-	updateList  chan shardUpdate
+	updateList  chan ShardUpdate
 }
 
 func newSocketServer() *socketServer {
@@ -31,7 +31,7 @@ func newSocketServer() *socketServer {
 		upgrader:    websocket.Upgrader{},
 		totalShards: int(totalShards),
 		shardCache:  make(map[int]int, totalShards),
-		updateList:  make(chan shardUpdate, 128),
+		updateList:  make(chan ShardUpdate, 128),
 	}
 }
 
@@ -54,8 +54,17 @@ func (s *socketServer) socketUpgrader(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *socketServer) run() {
-	// TODO: remove
-	go s.testData()
+	demo := os.Getenv("ENABLE_DEMO")
+	if demo != "" {
+		demo, err := strconv.ParseBool(demo)
+		if err != nil {
+			log.Panicln(err)
+		}
+		if demo {
+			log.Println("DEMO MODE enabled!")
+			go s.testData()
+		}
+	}
 
 	for {
 		select {
@@ -82,7 +91,7 @@ func (s *socketServer) sayHello(conn *websocket.Conn) {
 	log.Println(conn.RemoteAddr(), "opened and saluted")
 }
 
-func (s *socketServer) sayUpdate(u shardUpdate) {
+func (s *socketServer) sayUpdate(u ShardUpdate) {
 	data := Message{
 		Op: OpUpdate,
 		Data: UpdateMessage{
@@ -144,7 +153,7 @@ func (s *socketServer) testData() {
 		shard := rng.Intn(s.totalShards)
 		status := rng.Intn(5)
 
-		u := shardUpdate{
+		u := ShardUpdate{
 			ID:     shard,
 			Status: status,
 		}

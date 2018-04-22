@@ -16,8 +16,18 @@ func init() {
 }
 
 func main() {
+	host := os.Getenv("HOST_ADDR")
+	if host == "" {
+		log.Fatalln("Missing HOST_ADDR")
+	}
+	key := os.Getenv("SECRET_KEY")
+	if key == "" {
+		log.Fatalln("Missing SECRET_KEY")
+	}
+
 	server := server.Server{
-		Host: os.Getenv("HOST_ADDR"),
+		Host: host,
+		Key:  key,
 	}
 	server.Run()
 }
