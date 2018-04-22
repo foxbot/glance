@@ -1,0 +1,35 @@
+var root = document.getElementById("app-mount");
+
+if (!('WebSocket' in window)) {
+  m.render(root, "Sorry, your browser is not supported (missing WebSocket)");
+}
+
+const RightShift = 4194304;
+var TotalShards = 360;
+
+var shardId = 0;
+function setShard(e) {
+  const id = +e.target.value;
+  shardId = (id / RightShift) % TotalShards;
+}
+
+const ShardCalculator = {
+  view: function() {
+    return m("div", [
+      m("p", "Guild ID: "),
+      m("input", { type: "text", onchange: setShard }, ""),
+      m("p", "Shard ID:" + shardId)
+    ]);
+  }
+}
+
+const App = {
+  view: function() {
+    return m("div", [
+      m("h1", "dabbing bot"),
+      m(ShardCalculator)
+    ]);
+  }
+}
+
+m.mount(root, App);

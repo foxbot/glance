@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono|IBM+Plex+Sans');
+
+body {
+    background-color: rgb(30, 30, 50);
+    color: #AAA;
+
+    font-family: 'IBM Plex Sans', sans-serif;
+}
+input {
+    background-color: rgb(52, 52, 78);
+    color: #BBB;
+
+    border: .5px solid;
+
+    font-family: 'IBM Plex Mono', monospace;
+}
+
+i.shard {
+    border: none;
+    margin: 0 5px 0 0;
+    padding: 0 8px;
+}
+
+#shards-container {
+    display: flex;
+    flex-wrap: wrap;
+
+    margin: 10px;
+    border: 0.1px solid #AAA;
+}
+
+.shard {
+    box-sizing: border-box;
+    flex-grow: 1;
+    width: 4%;
+
+    margin: 2px 1px;
+    border: dotted 1px;
+}
+.selected {
+    border: solid 2px cyan;
+}
+
+.shard[data-status="unknown"] {
+    background-color: rgb(56, 56, 119);
+}
+.shard[data-status="starting"] {
+    background-color: rgb(151, 218, 44);
+}
+.shard[data-status="online"] {
+    background-color: rgb(16, 99, 16);
+}
+.shard[data-status="stopping"] {
+    background-color: rgb(212, 103, 0);
+}
+.shard[data-status="offline"] {
+    background-color: rgb(184, 0, 0);
+}

@@ -1,0 +1,30 @@
+<html>
+<head>
+  <title>DAB Bot at a glance</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <noscript>Please enable JavaScript to use this application.</noscript>
+  <div id="app">
+    <h1>dabbing bot</h1>
+    <hr/>
+    <div id="shard-calc">
+      <label>Guild ID <input id="shard-calc-in" type="text"> is on Shard <span id="shard-calc-out">0</span></label>
+    </div>
+    <hr/>
+    <div class="shard-legend">
+      <p>
+        <i class="shard" data-status="unknown"></i>Unknown
+        <i class="shard" data-status="starting"></i>Starting
+        <i class="shard" data-status="online"></i>Online
+        <i class="shard" data-status="stopping"></i>Stopping
+        <i class="shard" data-status="offline"></i>Offline
+      </p>
+    </div>
+    <div id="shards-container">
+    </div>
+  </div>
+  <script src="//unpkg.com/mithril/mithril.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>
