@@ -30,6 +30,7 @@ type (
 	// HelloMessage introduces initial state to a client
 	HelloMessage struct {
 		TotalShards int
+		State       map[int]int
 	}
 	// UpdateMessage is sent when a shard changes status
 	UpdateMessage struct {

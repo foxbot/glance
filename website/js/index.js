@@ -84,7 +84,7 @@ const STATUS = {
 };
 
 socket.addEventListener("message", function(e) {
-  console.log("socket message", e);
+  //console.log("socket message", e);
   
   let data = JSON.parse(e.data);
   if (!'Op' in data) {
@@ -95,6 +95,12 @@ socket.addEventListener("message", function(e) {
     case OP.HELLO:
       TotalShards = data.Data.TotalShards;
       paintShards();
+
+      for (const id in data.Data.State ) {
+        const val = STATUS[data.Data.State[id]];
+        shards[id].setAttribute("data-status", val);
+      }
+
       break;
     case OP.UPDATE:
       const id = data.Data.Shard;

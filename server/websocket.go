@@ -16,6 +16,7 @@ type socketServer struct {
 	clients     []*websocket.Conn
 	upgrader    websocket.Upgrader
 	totalShards int
+	shardCache  map[int]int
 	updateList  chan shardUpdate
 }
 
@@ -29,6 +30,7 @@ func newSocketServer() *socketServer {
 		clients:     make([]*websocket.Conn, 0),
 		upgrader:    websocket.Upgrader{},
 		totalShards: int(totalShards),
+		shardCache:  make(map[int]int, totalShards),
 		updateList:  make(chan shardUpdate, 128),
 	}
 }
@@ -58,8 +60,8 @@ func (s *socketServer) run() {
 	for {
 		select {
 		case u := <-s.updateList:
-			log.Println("dequeued update", u)
 			s.sayUpdate(u)
+			s.shardCache[u.ID] = u.Status
 		}
 	}
 }
@@ -69,6 +71,7 @@ func (s *socketServer) sayHello(conn *websocket.Conn) {
 		Op: OpHello,
 		Data: HelloMessage{
 			TotalShards: s.totalShards,
+			State:       s.shardCache,
 		},
 	}
 	err := conn.WriteJSON(data)
@@ -105,7 +108,6 @@ func (s *socketServer) sayUpdate(u shardUpdate) {
 			s.die(c)
 		}
 	}
-	log.Println("sent updates")
 }
 
 func (s *socketServer) die(conn *websocket.Conn) {
@@ -147,7 +149,6 @@ func (s *socketServer) testData() {
 			Status: status,
 		}
 		s.updateList <- u
-		log.Println("built update", u)
 
 		time.Sleep(time.Second * 1)
 	}
