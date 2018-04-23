@@ -1,13 +1,18 @@
 @import url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono|IBM+Plex+Sans');
 
+:root {
+    --shard-width: 58px;
+    --shard-height: 40px;
+}
+
 body {
-    background-color: rgb(30, 30, 50);
+    background-color: rgb(15, 15, 20);
     color: #AAA;
 
     font-family: 'IBM Plex Sans', sans-serif;
 }
 input {
-    background-color: rgb(52, 52, 78);
+    background-color: rgb(20, 20, 25);
     color: #BBB;
 
     border: .5px solid;
@@ -49,34 +54,40 @@ i.shard {
     box-sizing: border-box;
     flex-grow: 1;
 
-    width: 4%;
-
-    margin: 2px 1px;
-    border: dotted 1px;
+    width: var(--shard-width);
+    height: var(--shard-height);
+}
+.shard:hover{
+    border: 2px solid grey;
+    transform: scale(2);
 }
 .shard-id {
     margin: auto;
-    text-align: center;
 
-    color: #FFF;
-    font-size: 1.8em;
+    font-family: 'IBM Plex Mono';
+    font-size: 12px;
 }
 .selected {
     border: solid 2.5px cyan;
 }
 
 .shard[data-status="unknown"] {
-    background-color: rgb(56, 56, 119);
+    color: #fff;
+    background-color: rgb(30, 30, 30);
 }
 .shard[data-status="starting"] {
-    background-color: rgb(151, 218, 44);
+    color: #fff;
+    background-color: rgb(42, 69, 56);
 }
 .shard[data-status="online"] {
+    color: #fff;
     background-color: rgb(16, 99, 16);
 }
 .shard[data-status="stopping"] {
-    background-color: rgb(212, 103, 0);
+    color: #fff;
+    background-color: rgb(98, 57, 19);
 }
 .shard[data-status="offline"] {
-    background-color: rgb(184, 0, 0);
+    color: #fff;
+    background-color: rgb(66, 0, 0);
 }
