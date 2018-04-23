@@ -57,19 +57,37 @@ function paintShards() {
 paintShards();
 
 // -- Socket
+
 let socket = new WebSocket(ApiUrl);
-socket.addEventListener("open", function(e) {
-  console.log("socket open", e);
-});
-socket.addEventListener("close", function(e) {
-  console.log("socket close", e);
+addEvents(socket);
+
+function addEvents(socket) {
+  socket.addEventListener("open", onOpen);
+  socket.addEventListener("close", onClose);
+  socket.addEventListener("error", onError);
+  socket.addEventListener("message", onMessage);
+}
+
+function onOpen(e) {
+  console.log("Socket opened.");
+}
+function onClose(e) {
+  console.log("Socket closed.");
   shards = [];
   TotalShards = 0;
   paintShards();
-});
-socket.addEventListener("error", function(e) {
-  console.log("socket error", e);
-});
+  
+  // Try to reconnect
+  // TODO: exponential backoff? probably should.
+  setTimeout(function() {
+    console.log("Attempting reconnect...");
+    socket = new WebSocket(ApiUrl);
+    addEvents(socket);
+  }, 5000);
+}
+function onError(e) {
+  console.error("Socket error!", e);
+}
 
 const OP = {
   HELLO: 0,
@@ -83,9 +101,7 @@ const STATUS = {
   4: 'offline'
 };
 
-socket.addEventListener("message", function(e) {
-  //console.log("socket message", e);
-  
+function onMessage(e) {
   let data = JSON.parse(e.data);
   if (!'Op' in data) {
     console.error("invalid payload", data);
@@ -108,4 +124,4 @@ socket.addEventListener("message", function(e) {
       shards[id].setAttribute("data-status", val)
       break;
   }
-});
+}
