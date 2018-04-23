@@ -16,6 +16,11 @@ const shardOutput = document.getElementById("shard-calc-out");
 
 shardInput.addEventListener("input", function(event) {
   const id = +event.target.value;
+  if (isNaN(id)) {
+    setSelectedShard(-1);
+    return;
+  }
+
   const shardNumber = Math.floor(id / RightShift) % TotalShards;
   shardOutput.innerText = shardNumber;
   setSelectedShard(shardNumber);
@@ -27,7 +32,9 @@ function setSelectedShard(id) {
       shard.classList.remove("selected");
     }
   });
-  shards[id].classList.add("selected");
+  if (id > 0) {
+    shards[id].classList.add("selected");
+  }
 }
 
 // -- Shards Container
@@ -44,7 +51,7 @@ function paintShards() {
     el.className = "shard";
     el.setAttribute("data-status", "unknown");
     
-    const nameEl = document.createElement("h3");
+    const nameEl = document.createElement("p");
     nameEl.className = "shard-id";
     nameEl.innerText = i;
   

@@ -15,6 +15,22 @@ input {
     font-family: 'IBM Plex Mono', monospace;
 }
 
+.header {
+    display: flex;
+    align-items: center;
+}
+.header-text {
+    margin: 0;
+    margin-right: 10px;
+}
+.header-subtitle {
+    border-bottom: solid 1px;
+}
+.header #shard-calc {
+    margin-left: auto;
+    justify-content: flex-end;
+}
+
 i.shard {
     border: none;
     margin: 0 5px 0 0;
@@ -32,13 +48,21 @@ i.shard {
 .shard {
     box-sizing: border-box;
     flex-grow: 1;
+
     width: 4%;
 
     margin: 2px 1px;
     border: dotted 1px;
 }
+.shard-id {
+    margin: auto;
+    text-align: center;
+
+    color: #FFF;
+    font-size: 1.8em;
+}
 .selected {
-    border: solid 2px cyan;
+    border: solid 2.5px cyan;
 }
 
 .shard[data-status="unknown"] {
