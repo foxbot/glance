@@ -59,6 +59,12 @@ func (s *Server) StatusWebhook(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(500)
 		return
 	}
+	if u.ID < 0 || u.ID > s.socket.totalShards {
+		log.Println("invalid shard received?", u)
+		w.WriteHeader(400)
+		return
+	}
+
 	s.socket.updateList <- u
 	w.WriteHeader(202)
 }
