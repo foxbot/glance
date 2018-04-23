@@ -149,9 +149,21 @@ func (s *socketServer) testData() {
 	src := rand.NewSource(time.Now().UnixNano())
 	rng := rand.New(src)
 
+	// populate initial list with data
+	for i := 0; i < s.totalShards; i++ {
+		// [1, 5) - don't want to send unknowns
+		status := rng.Intn(4) + 1
+		u := ShardUpdate{
+			ID:     i,
+			Status: status,
+		}
+		s.updateList <- u
+	}
+
 	for {
 		shard := rng.Intn(s.totalShards)
-		status := rng.Intn(5)
+		// [1, 5) - don't want to send unknowns
+		status := rng.Intn(4) + 1
 
 		u := ShardUpdate{
 			ID:     shard,
