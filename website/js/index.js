@@ -1,5 +1,5 @@
 // -- Global
-const ApiUrl = "ws://" + window.location.host + "/api/socket";
+const ApiUrl = (window.location.protocol == "https:" ? "wss://" : "ws://") + window.location.host + "/api/socket";
 let TotalShards = 0;
 
 /** @type {Array<HTMLDivElement>} */
