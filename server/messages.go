@@ -5,6 +5,8 @@ const (
 	OpHello int = iota
 	// OpUpdate is the opcode for UpdateMessage
 	OpUpdate
+	// OpTick is a keep-alive for the websocket, no payload
+	OpTick
 	// StatusUnknown is a shard with unknown status
 	StatusUnknown int = 0
 	// StatusWaiting is waiting for startup

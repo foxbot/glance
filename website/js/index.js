@@ -99,6 +99,7 @@ function onError(e) {
 const OP = {
   HELLO: 0,
   UPDATE: 1,
+  TICK: 2,
 };
 const STATUS = {
   0: 'unknown',
@@ -130,6 +131,9 @@ function onMessage(e) {
       const id = data.Data.Shard;
       const val = STATUS[data.Data.Status];
       shards[id].setAttribute("data-status", val)
+      break;
+    // don't care about heartbeat data, just keep the socket alive
+    case OP.TICK:
       break;
   }
 }

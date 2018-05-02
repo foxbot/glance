@@ -66,11 +66,16 @@ func (s *socketServer) run() {
 		}
 	}
 
+	t := time.NewTicker(time.Second * 5)
+	defer t.Stop()
+
 	for {
 		select {
 		case u := <-s.updateList:
 			s.sayUpdate(u)
 			s.shardCache[u.ID] = u.Status
+		case <-t.C:
+			s.sayTick()
 		}
 	}
 }
@@ -98,6 +103,31 @@ func (s *socketServer) sayUpdate(u ShardUpdate) {
 			Shard:  u.ID,
 			Status: u.Status,
 		},
+	}
+
+	b, err := json.Marshal(data)
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	pm, err := websocket.NewPreparedMessage(websocket.TextMessage, b)
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	for _, c := range s.clients {
+		err = c.WritePreparedMessage(pm)
+		if err != nil {
+			log.Println(err)
+			s.die(c)
+		}
+	}
+}
+
+func (s *socketServer) sayTick() {
+	data := Message{
+		Op:   OpTick,
+		Data: true,
 	}
 
 	b, err := json.Marshal(data)
