@@ -102,10 +102,11 @@ const OP = {
 };
 const STATUS = {
   0: 'unknown',
-  1: 'starting',
-  2: 'online',
-  3: 'stopping',
-  4: 'offline'
+  1: 'waiting',
+  2: 'starting',
+  3: 'online',
+  4: 'stopping',
+  5: 'offline'
 };
 
 function onMessage(e) {

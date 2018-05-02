@@ -6,15 +6,17 @@ const (
 	// OpUpdate is the opcode for UpdateMessage
 	OpUpdate
 	// StatusUnknown is a shard with unknown status
-	StatusUnknown int = iota
+	StatusUnknown int = 0
+	// StatusWaiting is waiting for startup
+	StatusWaiting = 1
 	// StatusStarting is starting
-	StatusStarting
+	StatusStarting = 2
 	// StatusOnline is online
-	StatusOnline
+	StatusOnline = 3
 	// StatusStopping is stopping
-	StatusStopping
+	StatusStopping = 4
 	// StatusOffline is dead
-	StatusOffline
+	StatusOffline = 5
 )
 
 type (
