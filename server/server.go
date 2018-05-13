@@ -28,6 +28,7 @@ func (s *Server) Run() error {
 	r.Use(middleware.Recoverer)
 
 	sock := newSocketServer()
+	sock.loadState()
 	go sock.run()
 	s.socket = sock
 

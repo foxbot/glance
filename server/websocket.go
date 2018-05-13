@@ -1,7 +1,10 @@
 package server
 
 import (
+	"bytes"
+	"encoding/gob"
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
@@ -74,6 +77,7 @@ func (s *socketServer) run() {
 		case u := <-s.updateList:
 			s.sayUpdate(u)
 			s.shardCache[u.ID] = u.Status
+			s.saveState()
 		case <-t.C:
 			s.sayTick()
 		}
@@ -174,7 +178,7 @@ func (s *socketServer) die(conn *websocket.Conn) {
 	s.clients = c[:len(c)-1]
 }
 
-// TODO: remove this for prod
+// demo mode
 func (s *socketServer) testData() {
 	src := rand.NewSource(time.Now().UnixNano())
 	rng := rand.New(src)
@@ -203,4 +207,42 @@ func (s *socketServer) testData() {
 
 		time.Sleep(time.Second * 1)
 	}
+}
+
+func (s *socketServer) saveState() {
+	b := new(bytes.Buffer)
+	e := gob.NewEncoder(b)
+
+	err := e.Encode(s.shardCache)
+	if err != nil {
+		panic(err)
+	}
+
+	err = ioutil.WriteFile("state.dat", b.Bytes(), 600)
+	if err != nil {
+		panic(err)
+	}
+	log.Println("saved state")
+}
+
+func (s *socketServer) loadState() {
+	if _, err := os.Stat("state.dat"); os.IsNotExist(err) {
+		log.Println("hey, tried to load a state that doesn't exist")
+		return
+	}
+	raw, err := ioutil.ReadFile("state.dat")
+	if err != nil {
+		panic(err)
+	}
+	b := bytes.NewBuffer(raw)
+	d := gob.NewDecoder(b)
+
+	var m map[int]int
+	err = d.Decode(&m)
+	if err != nil {
+		panic(err)
+	}
+	s.shardCache = m
+
+	log.Println("loaded state")
 }
