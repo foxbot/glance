@@ -32,7 +32,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	err = ioutil.WriteFile("makestate.dat", b.Bytes(), 600)
+	err = ioutil.WriteFile("makestate.dat", b.Bytes(), 666)
 	if err != nil {
 		panic(err)
 	}

@@ -218,7 +218,7 @@ func (s *socketServer) saveState() {
 		panic(err)
 	}
 
-	err = ioutil.WriteFile("state.dat", b.Bytes(), 600)
+	err = ioutil.WriteFile("state.dat", b.Bytes(), 666)
 	if err != nil {
 		panic(err)
 	}
