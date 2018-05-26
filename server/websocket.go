@@ -110,8 +110,10 @@ func (s *socketServer) sayHello(conn *websocket.Conn) {
 	data := Message{
 		Op: OpHello,
 		Data: HelloMessage{
-			TotalShards: s.totalShards,
-			State:       s.shardCache,
+			TotalShards:  s.totalShards,
+			TotalPatrons: s.patronBots,
+			PatronShards: s.patronShards,
+			State:        s.shardCache,
 		},
 	}
 	err := conn.WriteJSON(data)

@@ -42,7 +42,11 @@ i.shard {
     padding: 0 8px;
 }
 
-#shards-container {
+.container-label {
+    margin: 0;
+}
+
+.container {
     display: flex;
     flex-wrap: wrap;
 

@@ -1,6 +1,8 @@
 // -- Global
 const ApiUrl = (window.location.protocol == "https:" ? "wss://" : "ws://") + window.location.host + "/api/socket";
 let TotalShards = 0;
+let TotalPatrons = 0;
+let PatronShards = 0;
 
 
 let shards = {
@@ -26,52 +28,79 @@ const RightShift = 4194304;
 const shardInput = document.getElementById("shard-calc-in");
 /** @type {HTMLSpanElement} */
 const shardOutput = document.getElementById("shard-calc-out");
+/** @type {HTMLSpanElement} */
+const shardOutputPatron = document.getElementById("shard-calc-pout");
 
 shardInput.addEventListener("input", function(event) {
   const id = +event.target.value;
   if (isNaN(id)) {
-    setSelectedShard(-1);
+    setSelectedShard(-1, -1);
     return;
   }
 
   const shardNumber = Math.floor(id / RightShift) % TotalShards;
   shardOutput.innerText = shardNumber;
-  setSelectedShard(shardNumber);
+  const shardNumberP = Math.floor(id / RightShift) % PatronShards;
+  shardOutputPatron.innerText = shardNumberP;
+  setSelectedShard(shardNumber, shardNumberP);
 });
 
-function setSelectedShard(id) {
-  shards.forEach(shard => {
-    if (shard.classList.contains("selected")) {
-      shard.classList.remove("selected");
+function setSelectedShard(id, patronId) {
+  for (let bot in shards) {
+    shards[bot].forEach(shard => {
+      if (shard.classList.contains("selected")) {
+        shard.classList.remove("selected");
+      }
+    });
+    if (bot == 0 && id > 0) {
+      shards[0][id].classList.add("selected");
     }
-  });
-  if (id > 0) {
-    shards[id].classList.add("selected");
+    if (bot > 0 && patronId > 0) {
+      shards[+bot][patronId].classList.add("selected");
+    }
   }
 }
 
 // -- Shards Container
 
 const shardsContainer = document.getElementById("shards-container");
+const patronContainer = document.getElementById("patron-container");
+
+function createShardEl(name) {
+  const el = document.createElement("div");
+  el.className = "shard";
+  el.setAttribute("data-status", "unknown");
+    
+  const nameEl = document.createElement("p");
+  nameEl.className = "shard-id";
+  nameEl.innerText = name;
+  
+  el.appendChild(nameEl);
+
+  return el;
+}
 
 function paintShards() {
   while (shardsContainer.lastChild) {
     shardsContainer.removeChild(shardsContainer.lastChild)
   }
+  while (patronContainer.lastChild) {
+    patronContainer.removeChild(patronContainer.lastChild);
+  }
   
   for (let i = 0; i < TotalShards; i++) {
-    const el = document.createElement("div");
-    el.className = "shard";
-    el.setAttribute("data-status", "unknown");
-    
-    const nameEl = document.createElement("p");
-    nameEl.className = "shard-id";
-    nameEl.innerText = i;
-  
-    el.appendChild(nameEl);
+    let el = createShardEl(i);
   
     shardsContainer.appendChild(el);
     shards[0][i] = el;
+  }
+  for (let p = 1; p < TotalPatrons+1; p++) {
+    for (let i = 0; i < PatronShards; i++) {
+      let el = createShardEl("P"+p+"-"+i);
+      
+      patronContainer.appendChild(el);
+      shards[p][i] = el;
+    }
   }
 }
 paintShards();
@@ -134,6 +163,9 @@ function onMessage(e) {
   switch (data.Op) {
     case OP.HELLO:
       TotalShards = data.Data.TotalShards;
+      TotalPatrons = data.Data.TotalPatrons;
+      PatronShards = data.Data.PatronShards;
+      
       paintShards();
 
       for (const id in data.Data.State[0] ) {

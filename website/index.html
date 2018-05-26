@@ -10,7 +10,7 @@
         <h1 class="header-text">DAB Bot</h1>
         <h3 class="header-text header-subtitle">glance dashboard</h3>
         <div id="shard-calc">
-          <label>Guild ID <input id="shard-calc-in" type="text"> is on Shard <span id="shard-calc-out">0</span></label>
+          <label>Guild ID <input id="shard-calc-in" type="text"> is on Shard <span id="shard-calc-out">0</span>/P<span id="shard-calc-pout">0</span></label>
         </div>
     </header>
     <hr/>
@@ -24,7 +24,11 @@
         <i class="shard" data-status="offline"></i>Offline
       </p>
     </div>
-    <div id="shards-container">
+    <p class="container-label"><small>main bot</small></p>
+    <div id="shards-container" class="container">
+    </div>
+    <p class="container-label"><small>patron bots</small></p>
+    <div id="patron-container" class="container">
     </div>
   </div>
   <script src="js/index.js"></script>

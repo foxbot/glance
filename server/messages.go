@@ -35,7 +35,9 @@ type (
 	}
 	// HelloMessage introduces initial state to a client
 	HelloMessage struct {
-		TotalShards int
+		TotalShards  int
+		TotalPatrons int
+		PatronShards int
 		// State: [bot [shard state]]
 		State map[int]map[int]int
 	}
