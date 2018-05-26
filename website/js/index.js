@@ -33,7 +33,7 @@ const shardOutputPatron = document.getElementById("shard-calc-pout");
 
 shardInput.addEventListener("input", function(event) {
   const id = +event.target.value;
-  if (isNaN(id)) {
+  if (isNaN(id) || /^\s+$/.test(event.target.value)) {
     setSelectedShard(-1, -1);
     return;
   }
@@ -179,7 +179,6 @@ function onMessage(e) {
 
       break;
     case OP.UPDATE:
-      console.log(data);
       const bot = +data.Data.Bot;
       const id = +data.Data.Shard;
       const val = STATUS[data.Data.Status];
