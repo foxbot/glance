@@ -2,8 +2,21 @@
 const ApiUrl = (window.location.protocol == "https:" ? "wss://" : "ws://") + window.location.host + "/api/socket";
 let TotalShards = 0;
 
-/** @type {Array<HTMLDivElement>} */
-let shards = [];
+
+let shards = {
+  /** @type {Array<HTMLDivElement>} 
+   * Main bot shards
+  */
+  0: [],
+  /** @type {Array<HTMLDivElement>}
+   * Patron Bot 1
+   */
+  1: [],
+  /** @type {Array<HTMLDivElement>} 
+   * Patron Bot 2
+  */
+  2: [],
+};
 
 // -- Shard Calculator
 
@@ -58,7 +71,7 @@ function paintShards() {
     el.appendChild(nameEl);
   
     shardsContainer.appendChild(el);
-    shards[i] = el;
+    shards[0][i] = el;
   }
 }
 paintShards();
@@ -80,7 +93,9 @@ function onOpen(e) {
 }
 function onClose(e) {
   console.log("Socket closed.");
-  shards = [];
+  for (let key in shards) {
+    shards[key] = [];
+  }
   TotalShards = 0;
   paintShards();
   
@@ -121,16 +136,17 @@ function onMessage(e) {
       TotalShards = data.Data.TotalShards;
       paintShards();
 
-      for (const id in data.Data.State ) {
-        const val = STATUS[data.Data.State[id]];
-        shards[id].setAttribute("data-status", val);
+      for (const id in data.Data.State[0] ) {
+        const val = STATUS[data.Data.State[0][id]];
+        shards[0][id].setAttribute("data-status", val);
       }
 
       break;
     case OP.UPDATE:
-      const id = data.Data.Shard;
+      const bot = +data.Data.Bot;
+      const id = +data.Data.Shard;
       const val = STATUS[data.Data.Status];
-      shards[id].setAttribute("data-status", val)
+      shards[bot][id].setAttribute("data-status", val)
       break;
     // don't care about heartbeat data, just keep the socket alive
     case OP.TICK:
