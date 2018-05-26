@@ -63,7 +63,6 @@ i.shard {
 }
 .shard:hover{
     border: 2px solid grey;
-    transform: scale(2);
 }
 .shard-id {
     margin: auto;
