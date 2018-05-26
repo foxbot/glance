@@ -52,10 +52,10 @@ function setSelectedShard(id, patronId) {
         shard.classList.remove("selected");
       }
     });
-    if (bot == 0 && id > 0) {
+    if (bot == 0 && id >= 0) {
       shards[0][id].classList.add("selected");
     }
-    if (bot > 0 && patronId > 0) {
+    if (bot > 0 && patronId >= 0) {
       shards[+bot][patronId].classList.add("selected");
     }
   }
