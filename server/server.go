@@ -60,7 +60,17 @@ func (s *Server) StatusWebhook(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(500)
 		return
 	}
+	if u.Bot < 0 || u.Bot > s.socket.patronBots+1 {
+		log.Println("invalid bot received?", u)
+		w.WriteHeader(400)
+		return
+	}
 	if u.ID < 0 || u.ID > s.socket.totalShards {
+		log.Println("invalid shard received?", u)
+		w.WriteHeader(400)
+		return
+	}
+	if u.Bot > 0 && u.ID > s.socket.patronShards {
 		log.Println("invalid shard received?", u)
 		w.WriteHeader(400)
 		return

@@ -26,6 +26,7 @@ type (
 	ShardUpdate struct {
 		ID     int
 		Status int
+		Bot    int
 	}
 	// Message is the base outgoing message to any client
 	Message struct {
@@ -35,11 +36,13 @@ type (
 	// HelloMessage introduces initial state to a client
 	HelloMessage struct {
 		TotalShards int
-		State       map[int]int
+		// State: [bot [shard state]]
+		State map[int]map[int]int
 	}
 	// UpdateMessage is sent when a shard changes status
 	UpdateMessage struct {
 		Shard  int
 		Status int
+		Bot    int
 	}
 )

@@ -16,11 +16,13 @@ import (
 )
 
 type socketServer struct {
-	clients     []*websocket.Conn
-	upgrader    websocket.Upgrader
-	totalShards int
-	shardCache  map[int]int
-	updateList  chan ShardUpdate
+	clients      []*websocket.Conn
+	upgrader     websocket.Upgrader
+	totalShards  int
+	patronBots   int
+	patronShards int
+	shardCache   map[int]map[int]int
+	updateList   chan ShardUpdate
 }
 
 func newSocketServer() *socketServer {
@@ -29,12 +31,32 @@ func newSocketServer() *socketServer {
 		log.Panicln(err)
 	}
 
+	totalPatrons, err := strconv.ParseInt(os.Getenv("PATRON_BOTS"), 10, 32)
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	patronShards, err := strconv.ParseInt(os.Getenv("PATRON_SHARDS"), 10, 32)
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	cache := make(map[int]map[int]int, 1+totalPatrons)
+	cache[0] = make(map[int]int, totalShards)
+
+	total := int(totalPatrons)
+	for i := 1; i < total+1; i++ {
+		cache[i] = make(map[int]int, patronShards)
+	}
+
 	return &socketServer{
-		clients:     make([]*websocket.Conn, 0),
-		upgrader:    websocket.Upgrader{},
-		totalShards: int(totalShards),
-		shardCache:  make(map[int]int, totalShards),
-		updateList:  make(chan ShardUpdate, 128),
+		clients:      make([]*websocket.Conn, 0),
+		upgrader:     websocket.Upgrader{},
+		totalShards:  int(totalShards),
+		patronBots:   total,
+		patronShards: int(patronShards),
+		shardCache:   cache,
+		updateList:   make(chan ShardUpdate, 128),
 	}
 }
 
@@ -76,7 +98,7 @@ func (s *socketServer) run() {
 		select {
 		case u := <-s.updateList:
 			s.sayUpdate(u)
-			s.shardCache[u.ID] = u.Status
+			s.shardCache[u.Bot][u.ID] = u.Status
 			s.saveState()
 		case <-t.C:
 			s.sayTick()
@@ -237,7 +259,7 @@ func (s *socketServer) loadState() {
 	b := bytes.NewBuffer(raw)
 	d := gob.NewDecoder(b)
 
-	var m map[int]int
+	var m map[int]map[int]int
 	err = d.Decode(&m)
 	if err != nil {
 		panic(err)
