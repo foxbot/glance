@@ -128,6 +128,7 @@ func (s *socketServer) sayUpdate(u ShardUpdate) {
 	data := Message{
 		Op: OpUpdate,
 		Data: UpdateMessage{
+			Bot:    u.Bot,
 			Shard:  u.ID,
 			Status: u.Status,
 		},

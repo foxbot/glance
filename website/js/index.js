@@ -126,6 +126,8 @@ function onClose(e) {
     shards[key] = [];
   }
   TotalShards = 0;
+  TotalPatrons = 0;
+  PatronShards = 0;
   paintShards();
   
   // Try to reconnect
@@ -168,13 +170,16 @@ function onMessage(e) {
       
       paintShards();
 
-      for (const id in data.Data.State[0] ) {
-        const val = STATUS[data.Data.State[0][id]];
-        shards[0][id].setAttribute("data-status", val);
+      for (const bot in data.Data.State ) {
+        for (const id in data.Data.State[bot]) {
+          const val = STATUS[data.Data.State[bot][id]];
+          shards[bot][id].setAttribute("data-status", val);
+        }
       }
 
       break;
     case OP.UPDATE:
+      console.log(data);
       const bot = +data.Data.Bot;
       const id = +data.Data.Shard;
       const val = STATUS[data.Data.Status];
