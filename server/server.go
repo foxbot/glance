@@ -2,20 +2,20 @@ package server
 
 import (
 	"encoding/json"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"path"
-
-	"github.com/go-chi/chi/middleware"
-
-	"github.com/go-chi/chi"
+	"strings"
 )
 
 // Server configures the HTTP server
 type Server struct {
 	Host   string
 	Key    string
+	Ips    []string
 	socket *socketServer
 }
 
@@ -26,6 +26,7 @@ func (s *Server) Run() error {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use()
 
 	sock := newSocketServer()
 	sock.loadState()
@@ -41,6 +42,20 @@ func (s *Server) Run() error {
 
 // StatusWebhook handles incoming status webhooks from the bots
 func (s *Server) StatusWebhook(w http.ResponseWriter, r *http.Request) {
+
+	isAllowed := false
+	for _, v := range s.Ips {
+		if strings.TrimSpace(v) == r.RemoteAddr {
+			isAllowed = true
+			break
+		}
+	}
+
+	if isAllowed {
+		w.WriteHeader(403)
+		return
+	}
+
 	key := path.Base(r.URL.Path)
 	if key != s.Key {
 		w.WriteHeader(401)
