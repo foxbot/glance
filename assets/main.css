@@ -1,0 +1,225 @@
+/* yeah this would be better with SASS */
+
+:root {
+    font-family: 'Hack';
+    
+    --bg: hsl(200, 80%, 5%);
+    --header-bg: hsl(200, 100%, 5%);
+    --header-accent: hsl(200, 25%, 10%);
+
+    --status-unknown: hsl(46, 22%, 15%);
+    --status-unhealthy: hsl(66, 47%, 31%);
+    --status-offline: hsl(359, 83%, 24%);
+    --status-online: hsl(124, 73%, 31%);
+    --status-starting: hsl(175, 73%, 31%);
+    --status-stopping: hsl(328, 79%, 34%);
+    --status-resuming: hsl(217, 100%, 54%);
+
+    --fg: #DDD;
+
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--fg);
+
+    margin: 0;
+    padding: 0;
+}
+
+.hide {
+    display: none !important; /* !important is bad but we need to overrule the flexboxes */
+}
+
+.header {
+    background-color: var(--header-bg);
+
+    height: 22px;
+    border-bottom: 1px solid var(--header-accent);
+    box-shadow: 0px -5px 5px var(--fg);
+
+    padding: 0;
+    margin: 0;
+    
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+.header-title {
+    padding: 0;
+    margin: 0;
+
+    flex: 1;
+}
+#header-guild {
+    padding: 0;
+    margin: 0;
+    
+    background-color: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--header-acent);
+    text-align: center;
+    font-family: 'Hack';
+    width: auto;
+    min-width: 40px;
+
+    flex: 1;
+}
+.header-author {
+    padding: 0;
+    margin: 0 8 0 0;
+
+    flex: 1;
+    text-align: right;
+}
+.header-author > a {
+    color: var(--fg);
+}
+
+#loading {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
+.loading-title {
+    margin: 2vh 0 0 0;
+}
+.loading-subtitle {
+    margin: 0;
+}
+
+.cluster-title::before {
+    content: 'cluster: ';
+}
+.cluster-title {
+    margin: 5px 5px 3px 5px;
+    font-weight: bold;
+    text-shadow: #ffffff99 0px 0px 4px;
+}
+.cluster-key-title {
+    text-shadow: #ffffff99 0px 0px 4px;
+}
+.cluster-container {
+    display: flex;
+    flex-wrap: wrap;
+
+    margin: 0px 5px;
+    border: 0.1px solid #AAA;
+}
+
+.shard {
+    box-sizing: border-box;
+    flex-grow: 1;
+
+    width: 58px;
+    height: 40px;
+}
+.shard:hover {
+    border: 2px solid grey;
+}
+.shard-id {
+    margin: auto;
+    font-size: 12px;
+}
+i.shard {
+    border: none;
+    margin: 0 5px 0 0;
+    padding: 0 8px;
+}
+
+.shard[data-status="0"] {
+  background-color: var(--status-unknown);
+  color: #fff;
+}
+.shard[data-status="1"] {
+    background-color: var(--status-unhealthy);
+    color: #fff;
+}
+.shard[data-status="2"] {
+    background-color: var(--status-offline);
+    color: #fff;
+}
+.shard[data-status="3"] {
+    background-color: var(--status-online);
+    color: #fff;
+}
+.shard[data-status="4"] {
+    background-color: var(--status-starting);
+    color: #fff;
+}
+.shard[data-status="5"] {
+    background-color: var(--status-stopping);
+    color: #fff;
+}
+.shard[data-status="6"] {
+    background-color: var(--status-resuming);
+    color: #fff;
+}
+
+.health-ping {
+    animation-name: pulse;
+    animation-duration: 2500ms;
+    animation-iteration-count: 1;
+    z-index: 1;
+}
+.guild-tagged {
+    border: 2px solid cyan;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0px 0px 0px 0px rgb(188, 188, 56)
+    }
+    50% {
+        box-shadow: 0px 0px 4px 4px rgb(188, 188, 56)
+    }
+    100% {
+        box-shadow: 0px 0px 0px 0px rgb(188, 188, 56)
+    }
+}
+
+
+#settings {
+    display: block;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+.settings-container {
+    background-color: var(--bg);
+    margin: 15% auto;
+    padding: 5px;
+    border: 1px solid var(--header-accent);
+    width: 40%;
+}
+.settings-title {
+    margin: 0 0 10px 0;
+}
+.settings-link {
+    text-decoration: dotted underline;
+    cursor: pointer;
+}
+.settings-checkbox[data-checked="false"]::before {
+    content: "[ ]";
+    color: #999;
+    cursor: pointer;
+}
+.settings-checkbox[data-checked="true"]::before {
+    content: "[X]";
+    color: #FFF;
+    text-shadow: #FFF 0px 0px 5px;
+    cursor: pointer;
+}
+#settings-glance-version {
+    margin: 2px 2px 0px 2px;
+    font-weight: lighter;
+    color: #888;
+}

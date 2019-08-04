@@ -1,0 +1,57 @@
+<html>
+<head>
+  <title>glance2</title>
+  <link rel="stylesheet" href="/assets/main.css">
+  <meta charset="utf-8">
+</head>
+<body>
+  <noscript>
+    This application requires JavaScript for dynamic layout painting and WebSocket data streaming. 
+    
+    A plaintext version of the site is provided for your convienence at <a href="/plain">/plain</a>.
+  </noscript>
+  <div class="header">
+    <p class="header-title">glance2 | <span id="data-connection-status">(js unloaded)</span></p>
+    <input id="header-guild" type="text" placeholder="(Find Guild by ID)">
+    <p class="header-author">
+      <a id="settings-open" class="settings-link">settings</a> |
+      foxbot.me | 
+      <a href="https://github.com/foxbot/glance">source</a>
+    </p>
+  </div>
+  <div id="app" class="hide">
+    <div class="cluster-key">
+      <p class="cluster-key-title">color key:
+        <i class="shard" data-status="0"></i>Unknown
+        <i class="shard" data-status="1"></i>Unhealthy
+        <i class="shard" data-status="2"></i>Offline
+        <i class="shard" data-status="3"></i>Online
+        <i class="shard" data-status="4"></i>Starting
+        <i class="shard" data-status="5"></i>Stopping
+        <i class="shard" data-status="6"></i>Resuming
+      </p>
+    </div>
+    <div id="app-cluster"></div>
+  </div>
+  <div id="loading">
+    <h1 class="loading-title">loading</h1>
+    <h2 class="loading-subtitle">(awaiting feed connection)</h2>
+  </div>
+  <div id="settings" class="hide">
+    <div class="settings-container">
+      <h1 class="settings-title">display settings</h1>
+
+      <label>
+          <a id="settings-pulse-health" class="settings-checkbox" data-checked="false"></a>
+          Pulse shards on health checks?
+      </label><br>
+
+      <br>
+      <a id="settings-close" class="settings-link">okay</a>
+      <small id="settings-glance-version"></small>
+    </div>
+  </div>
+
+  <script src="/assets/index.js"></script>
+</body>
+</html>
