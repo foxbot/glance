@@ -46,7 +46,7 @@ Glance requires the following:
 
 Copy the `.env.sample` file to `.env`, or, export the environment variables yourself.
 
-See `.env.sample` for documentation on how to set configuration flags. Additionally,
+See [`.env.sample`](./.env.sample) for documentation on how to set configuration flags. Additionally,
 you may [configure the integrated server](https://sanic.readthedocs.io/en/latest/sanic/config.html#builtin-configuration-values)
 with environment variables.
 
@@ -138,14 +138,17 @@ This endpoint sets the state for a given shard.
 
 ##### Parameters
 `cluster`: The name of the cluster this shard is on; this should match up with the cluster names in the configuration.
+
 `id`: The zero-indexed ID of this shard.
+
 `state`: The numeric Shard State of this shard; see above.
 
-#### `POST /api/health/<cluster>/<id:int>
+#### `POST /api/health/<cluster>/<id:int>`
 This endpoint marks a shard as healthy.
 
 ##### Parameters
 `cluster`: The name of the cluster this shard is on; this should match up with the cluster names in the configuration.
+
 `id`: The zero-indexed ID of this shard.
 
 ## License
