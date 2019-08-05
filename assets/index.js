@@ -23,7 +23,7 @@ function getSocketUrl() {
 
 /** --- END CONFIGURATION --- */
 
-let version = "glance2-f.0.0 // by foxbot";
+let version = "glance2-f.1.0 // by foxbot";
 
 /** @type Element */
 let dataConnectionStatus;

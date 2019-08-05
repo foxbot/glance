@@ -8,7 +8,8 @@ shards = 280
 
 async def bound_post(sem, url, sesion):
     async with sem:
-        await session.post(url)
+        headers = {'Authorization': 'bigdog'}
+        await session.post(url, headers=headers)
 
 async def run_init(session):
     tasks = []

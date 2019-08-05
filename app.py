@@ -36,9 +36,10 @@ Feeds = list()
 app = Sanic()
 HealthTask = None
 health_timeout = None
+health_check_interval = None
+authorization = None
 
 app.static('/assets/', './assets/')
-
 
 def validate_shard_in_cluster(cluster: str, id: int):
     if cluster not in State:
@@ -50,12 +51,21 @@ def validate_shard_in_cluster(cluster: str, id: int):
         return json({
             'error': f'shard \'{id}\' falls outside the range of valid shards on cluster \'{cluster}\''
         }, status=400)
-    
+
+    return None
+
+def require_auth(request):
+    if authorization and request.headers['Authorization'] != authorization:
+        return json({'error': 'this endpoint requires authorization'}, status=401)
+
     return None
 
 
 @app.route('/api/health/<cluster>/<id:int>', methods=['POST'])
 async def health(request, cluster: str, id: int):
+    auth = require_auth(request)
+    if auth is not None: return auth
+
     valid = validate_shard_in_cluster(cluster, id)
     if valid is not None: return valid
     
@@ -85,6 +95,9 @@ async def health(request, cluster: str, id: int):
 
 @app.route('/api/status/<cluster>/<id:int>/<state:int>', methods=['POST'])
 async def status(request, cluster: str, id: int, state: int):
+    auth = require_auth(request)
+    if auth is not None: return auth
+
     valid = validate_shard_in_cluster(cluster, id)
     if valid is not None: return valid
     
@@ -142,10 +155,10 @@ async def hook_health(app, loop):
 
 async def _health_loop():
     while True:
-        print('running health checks')
+        logging.debug('running health checks')
         await _run_health_checks()
-        print('health checks completed, sleeping')
-        await asyncio.sleep(health_timeout)
+        logging.debug('health checks completed, sleeping')
+        await asyncio.sleep(health_check_interval)
 
 async def _run_health_checks():
     now = time.time()
@@ -156,7 +169,7 @@ async def _run_health_checks():
             if shard['state'] == ShardState.UNHEALTHY: # this shard is already sick
                 continue # TODO: alerting for continued sickness?
             
-            if (now - shard['last_healthy']) > 15:
+            if (now - shard['last_healthy']) > health_timeout:
                 shard['state'] = ShardState.UNHEALTHY
                 payload = ujson.dumps({
                     'op': 'state_update',
@@ -182,7 +195,9 @@ def configure_state():
 if __name__ == '__main__':
     load_dotenv()
     configure_state()
-    health_timeout = int(os.getenv('GLANCE_HEALTH_TIMEOUT') or '15')
+    health_timeout = int(os.getenv('GLANCE_HEALTH_TIMEOUT') or '30')
+    health_check_interval = int(os.getenv('GLANCE_HEALTH_TIMER_INTERVAL') or '15')
+    authorization = os.getenv('GLANCE_PASSPHRASE')
 
     app.run(host=os.getenv('GLANCE_HOST') or '0.0.0.0',
             port=int(os.getenv('GLANCE_PORT') or '3000')

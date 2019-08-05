@@ -1,7 +1,8 @@
 /* yeah this would be better with SASS */
 
 :root {
-    font-family: 'Hack';
+    --font: 'Hack';
+    font-family: var(--font);
     
     --bg: hsl(200, 80%, 5%);
     --header-bg: hsl(200, 100%, 5%);
@@ -16,6 +17,17 @@
     --status-resuming: hsl(217, 100%, 54%);
 
     --fg: #DDD;
+    --fg-text-shadow-color: #FFFFFF99;
+    --cluster-container-border: #AAA;
+    --shard-hover-border: grey;
+    --shard-text-color: #FFF;
+
+    --guild-tag-color: red;
+    --health-pulse-color: rgb(188, 188, 56);
+
+    --checkbox-unchecked-color: #999;
+    --checkbox-checked-color: #FFF;
+    --version-color: #888;
 
     margin: 0;
     padding: 0;
@@ -60,9 +72,9 @@ body {
     
     background-color: var(--bg);
     color: var(--fg);
-    border: 1px solid var(--header-acent);
+    border: 1px solid var(--header-accent);
     text-align: center;
-    font-family: 'Hack';
+    font-family: var(--font);
     width: auto;
     min-width: 40px;
 
@@ -97,17 +109,17 @@ body {
 .cluster-title {
     margin: 5px 5px 3px 5px;
     font-weight: bold;
-    text-shadow: #ffffff99 0px 0px 4px;
+    text-shadow: var(--fg-text-shadow-color) 0px 0px 4px;
 }
 .cluster-key-title {
-    text-shadow: #ffffff99 0px 0px 4px;
+    text-shadow: var(--fg-text-shadow-color) 0px 0px 4px;
 }
 .cluster-container {
     display: flex;
     flex-wrap: wrap;
 
     margin: 0px 5px;
-    border: 0.1px solid #AAA;
+    border: 0.1px solid var(--cluster-container-border);
 }
 
 .shard {
@@ -118,7 +130,7 @@ body {
     height: 40px;
 }
 .shard:hover {
-    border: 2px solid grey;
+    border: 2px solid var(--shard-hover-border);
 }
 .shard-id {
     margin: auto;
@@ -132,31 +144,31 @@ i.shard {
 
 .shard[data-status="0"] {
   background-color: var(--status-unknown);
-  color: #fff;
+  color: var(--shard-text-color);
 }
 .shard[data-status="1"] {
     background-color: var(--status-unhealthy);
-    color: #fff;
+    color: var(--shard-text-color);
 }
 .shard[data-status="2"] {
     background-color: var(--status-offline);
-    color: #fff;
+    color: var(--shard-text-color);
 }
 .shard[data-status="3"] {
     background-color: var(--status-online);
-    color: #fff;
+    color: var(--shard-text-color);
 }
 .shard[data-status="4"] {
     background-color: var(--status-starting);
-    color: #fff;
+    color: var(--shard-text-color);
 }
 .shard[data-status="5"] {
     background-color: var(--status-stopping);
-    color: #fff;
+    color: var(--shard-text-color);
 }
 .shard[data-status="6"] {
     background-color: var(--status-resuming);
-    color: #fff;
+    color: var(--shard-text-color);
 }
 
 .health-ping {
@@ -166,18 +178,18 @@ i.shard {
     z-index: 1;
 }
 .guild-tagged {
-    border: 2px solid cyan;
+    border: 5px solid var(--guild-tag-color);
 }
 
 @keyframes pulse {
     0% {
-        box-shadow: 0px 0px 0px 0px rgb(188, 188, 56)
+        box-shadow: 0px 0px 0px 0px var(--health-pulse-color);
     }
     50% {
-        box-shadow: 0px 0px 4px 4px rgb(188, 188, 56)
+        box-shadow: 0px 0px 4px 4px var(--health-pulse-color);
     }
     100% {
-        box-shadow: 0px 0px 0px 0px rgb(188, 188, 56)
+        box-shadow: 0px 0px 0px 0px var(--health-pulse-color);
     }
 }
 
@@ -209,17 +221,17 @@ i.shard {
 }
 .settings-checkbox[data-checked="false"]::before {
     content: "[ ]";
-    color: #999;
+    color: var(--checkbox-unchecked-color);
     cursor: pointer;
 }
 .settings-checkbox[data-checked="true"]::before {
     content: "[X]";
-    color: #FFF;
-    text-shadow: #FFF 0px 0px 5px;
+    color: var(--checkbox-checked-color);
+    text-shadow: var(--checkbox-checked-color) 0px 0px 5px;
     cursor: pointer;
 }
 #settings-glance-version {
     margin: 2px 2px 0px 2px;
     font-weight: lighter;
-    color: #888;
+    color: var(--version-color);
 }
