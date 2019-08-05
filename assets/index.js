@@ -23,7 +23,7 @@ function getSocketUrl() {
 
 /** --- END CONFIGURATION --- */
 
-let version = "glance2-f.1.0 // by foxbot";
+let version = "glance2-f.1.1 // by foxbot";
 
 /** @type Element */
 let dataConnectionStatus;
@@ -44,7 +44,7 @@ let feed;
 let state;
 let pulseHealth = true;
 
-addEventListener('DOMContentLoaded', _ => {
+function init() {
   dataConnectionStatus = document.querySelector('#data-connection-status');
   dataConnectionStatus.textContent = '(js loaded)';
 
@@ -87,7 +87,7 @@ addEventListener('DOMContentLoaded', _ => {
   });
 
   document.querySelector('#settings-glance-version').innerText = version;
-});
+}
 
 function feedOpen(_) {
   dataConnectionStatus.textContent = 'connected';
@@ -249,4 +249,11 @@ function findGuilds() {
     el.classList.add('guild-tagged');
     taggedGuilds.push(el);
   }
+}
+
+// --- script all loaded
+if (document.readyState !== 'loading') {
+  init();
+} else {
+  addEventListener('DOMContentLoaded', _=>{init();})
 }
