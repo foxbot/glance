@@ -23,7 +23,7 @@ function getSocketUrl() {
 
 /** --- END CONFIGURATION --- */
 
-let version = "glance2-f.1.1 // by foxbot";
+let version = "glance2-f.1.2 // by foxbot";
 
 /** @type Element */
 let dataConnectionStatus;
@@ -45,6 +45,7 @@ let state;
 let pulseHealth = true;
 
 function init() {
+  console.log('glance// initializing.');
   dataConnectionStatus = document.querySelector('#data-connection-status');
   dataConnectionStatus.textContent = '(js loaded)';
 
@@ -252,8 +253,4 @@ function findGuilds() {
 }
 
 // --- script all loaded
-if (document.readyState !== 'loading') {
-  init();
-} else {
-  addEventListener('DOMContentLoaded', _=>{init();})
-}
+init();
