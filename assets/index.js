@@ -18,6 +18,10 @@
  * Otherwise, this will need to be changed to reflect your API server.
  */
 function getSocketUrl() {
+  if (window.config && 'url' in window.config) {
+    return window.config.url;
+  }
+
   let protocol = (window.location.protocol === 'https:') ? 'wss://' : 'ws://';
   return protocol + window.location.host + '/api/feed';
 }
@@ -49,6 +53,10 @@ function init() {
   console.log('glance// initializing.');
   dataConnectionStatus = document.querySelector('#data-connection-status');
   dataConnectionStatus.textContent = '(js loaded)';
+
+  if (window.config && 'branding' in window.config) {
+    document.querySelector('#header-brand').innerHTML = window.config.branding;
+  }
 
   appMount = document.querySelector('#app');
   appClusterMount = document.querySelector('#app-cluster')
