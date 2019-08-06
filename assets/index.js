@@ -18,12 +18,13 @@
  * Otherwise, this will need to be changed to reflect your API server.
  */
 function getSocketUrl() {
-  return 'ws://' + window.location.host + '/api/feed';
+  let protocol = (window.location.protocol === 'https:') ? 'wss://' : 'ws://';
+  return protocol + window.location.host + '/api/feed';
 }
 
 /** --- END CONFIGURATION --- */
 
-let version = "glance2-f.1.2 // by foxbot";
+let version = "glance2-f.1.3 // by foxbot";
 
 /** @type Element */
 let dataConnectionStatus;
