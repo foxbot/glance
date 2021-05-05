@@ -40,7 +40,7 @@ Glance requires the following:
 - Python 3.7
 - Optionally, an ASGI-compatible Web Server
 
-`$ pip -r requirements.txt`
+`$ pip install -r requirements.txt`
 
 ### Configuration
 
